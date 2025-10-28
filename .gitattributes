@@ -1,11 +1,39 @@
-# Unity files should use LF
+# Unity text files - use LF
 *.asset text eol=lf
 *.meta text eol=lf
 *.unity text eol=lf
 *.prefab text eol=lf
+*.scene text eol=lf
+*.mat text eol=lf
+*.controller text eol=lf
+*.anim text eol=lf
+*.cs text eol=lf
+*.shader text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
 
-# Binary files should not be modified
+# Unity binary files
 *.png binary
 *.jpg binary
+*.jpeg binary
 *.fbx binary
 *.wav binary
+*.mp3 binary
+*.ogg binary
+*.aif binary
+*.tga binary
+*.psd binary
+*.blend binary
+*.ma binary
+*.mb binary
+*.max binary
+
+# Unity specific
+Build/ binary
+Logs/ binary
+Obj/ binary
+
+# Auto-detect text files
+* text=auto
