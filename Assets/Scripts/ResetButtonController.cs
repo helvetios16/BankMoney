@@ -7,6 +7,12 @@ public class ResetButtonController : MonoBehaviour
     public ReceptionTrigger receptionTrigger;
     
     public GameEndController gameEndController;
+    
+    public CountdownTimer receptionTimer;
+    
+    public TransactionGoalController transactionGoalController;
+    
+    public PersonCounterController personCounterController;
 
     void Start()
     {
@@ -16,6 +22,9 @@ public class ResetButtonController : MonoBehaviour
 
     public void OnResetButtonClicked()
     {
+        if (transactionGoalController.CheckGoal(receptionTrigger.contadorTransaccion))
+        {
+        
         receptionTrigger.contadorTransaccion = 0;
         ReceptionTrigger.contadorGlobal = 0;
 
@@ -35,5 +44,16 @@ public class ResetButtonController : MonoBehaviour
         }
 
         // gameEndController.ShowLose();
+
+        receptionTimer.StopTimer();
+        receptionTimer.ResetTimer();
+
+        personCounterController.AddPerson();
+
+        }
+        else
+        {
+            transactionGoalController.MinusAttempt();
+        }
     }
 }

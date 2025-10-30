@@ -1,42 +1,43 @@
 using UnityEngine;
-using TMPro;  // si usas TextMeshPro
+using TMPro;
 
 public class CountdownTimer : MonoBehaviour
 {
-    public float timeRemaining = 30f;     // 30 segundos
+    public float initialTime = 30f;          // Tiempo inicial que quieres
+    private float timeRemaining;
     public bool timerIsRunning = false;
+    public TMP_Text timeText;
+    
+    public PersonCounterController personCounterController;
 
-    public TMP_Text timeText;             // arrastra aquí tu componente de texto
-
-    private void Start()
+    void Start()
     {
-        // empieza el contador
-        timerIsRunning = true;
-        UpdateTimeText(timeRemaining);
+        ResetTimer();                          // Al comenzar, lo inicializamos
     }
 
-    private void Update()
+    void Update()
     {
         if (timerIsRunning)
         {
-            if (timeRemaining > 0)
+            if (timeRemaining > 0f)
             {
                 timeRemaining -= Time.deltaTime;
                 UpdateTimeText(timeRemaining);
             }
             else
             {
-                timeRemaining = 0;
+                timeRemaining = 0f;
                 timerIsRunning = false;
                 UpdateTimeText(timeRemaining);
                 OnTimerEnd();
+                personCounterController.RemovePerson();
+                ResetTimer();
             }
         }
     }
 
     private void UpdateTimeText(float timeToDisplay)
     {
-        // Mostrar como “00:30”, “00:29”, etc
         float seconds = Mathf.FloorToInt(timeToDisplay % 60);
         timeText.text = string.Format("{0:00}", seconds);
     }
@@ -44,8 +45,25 @@ public class CountdownTimer : MonoBehaviour
     private void OnTimerEnd()
     {
         Debug.Log("¡Tiempo terminado!");
-        // Aquí llama al método ShowLose() o ShowWin() según corresponda
-        // Por ejemplo:
-        // gameEndController.ShowLose();
+        // Aquí llamas a lo que quieras cuando se acabe el tiempo.
+    }
+
+    // Función pública para reiniciar el contador
+    public void ResetTimer()
+    {
+        timeRemaining = initialTime;
+        UpdateTimeText(timeRemaining);
+    }
+
+    // Función pública para comenzar el contador
+    public void StartTimer()
+    {
+        timerIsRunning = true;
+    }
+
+    // Función pública para detener el contador
+    public void StopTimer()
+    {
+        timerIsRunning = false;
     }
 }
