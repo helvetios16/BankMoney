@@ -4505,7 +4505,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CountdownTimer
   timeRemaining: 30
-  timerIsRunning: 0
+  timerIsRunning: 1
   timeText: {fileID: 1712205973}
 --- !u!114 &1712205973
 MonoBehaviour:

@@ -19,7 +19,7 @@ public class UIContadorController : MonoBehaviour
 
     public void ActualizarTransaccion(int monto)
     {
-        textoTransaccion.text = "Transacción: $" + monto.ToString();
+        textoTransaccion.text = "Transacción: \n$" + monto.ToString();
     }
 }
 
