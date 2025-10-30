@@ -22,19 +22,25 @@ public class CountdownTimer : MonoBehaviour
             if (timeRemaining > 0f)
             {
                 timeRemaining -= Time.deltaTime;
+                if (timeRemaining < 0f)  // añadido
+                {
+                    timeRemaining = 0f;
+                }
                 UpdateTimeText(timeRemaining);
             }
             else
             {
                 timeRemaining = 0f;
-                timerIsRunning = false;
                 UpdateTimeText(timeRemaining);
                 OnTimerEnd();
-                personCounterController.RemovePerson();
-                ResetTimer();
+                Debug.Log("🕒 Timer finalizado — llamando a RemovePerson()");
+                timerIsRunning = false;
             }
+
         }
     }
+
+
 
     private void UpdateTimeText(float timeToDisplay)
     {
@@ -45,8 +51,13 @@ public class CountdownTimer : MonoBehaviour
     private void OnTimerEnd()
     {
         Debug.Log("¡Tiempo terminado!");
-        // Aquí llamas a lo que quieras cuando se acabe el tiempo.
+
+        if (personCounterController != null)
+            personCounterController.RemovePerson();
+        else
+            Debug.LogError("CountdownTimer: personCounterController no asignado en el Inspector.");
     }
+
 
     // Función pública para reiniciar el contador
     public void ResetTimer()
