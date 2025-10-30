@@ -5,6 +5,8 @@ public class ResetButtonController : MonoBehaviour
 {
     public Button resetButton;
     public ReceptionTrigger receptionTrigger;
+    
+    public GameEndController gameEndController;
 
     void Start()
     {
@@ -31,5 +33,7 @@ public class ResetButtonController : MonoBehaviour
         {
             Debug.LogError("ResetButtonController: uiController en receptionTrigger no está asignado.");
         }
+
+        // gameEndController.ShowLose();
     }
 }
