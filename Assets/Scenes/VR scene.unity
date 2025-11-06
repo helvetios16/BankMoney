@@ -602,7 +602,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2/5
+  m_text: 3/10
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7217,7 +7217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de9ad6b25b30826408c9c46b2a45b45e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CountdownTimer
-  initialTime: 30
+  initialTime: 20
   timerIsRunning: 0
   timeText: {fileID: 1712205973}
   personCounterController: {fileID: 1672858386}
@@ -8804,7 +8804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   maxPersons: 10
-  currentPersons: 2
+  currentPersons: 3
   gameEndController: {fileID: 1834529963}
   personsText: {fileID: 55628323}
   personsSlider: {fileID: 1882044343}
@@ -8919,7 +8919,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 30
+  m_text: 20
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
