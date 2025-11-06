@@ -12,6 +12,7 @@ public class NPCPathFollower : MonoBehaviour
 
     public CountdownTimer countdownTimer;
     public TransactionGoalController transactionGoal;
+    public  ToggleButtonEnable toogleButtonEnable;
 
     void Start()
     {
