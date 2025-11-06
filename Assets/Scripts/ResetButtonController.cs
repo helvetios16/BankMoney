@@ -26,7 +26,6 @@ public class ResetButtonController : MonoBehaviour
         {
         
         receptionTrigger.contadorTransaccion = 0;
-        ReceptionTrigger.contadorGlobal = 0;
 
         MontoItem[] items = Object.FindObjectsByType<MontoItem>(FindObjectsSortMode.None);
         foreach (MontoItem item in items)
@@ -53,6 +52,22 @@ public class ResetButtonController : MonoBehaviour
         }
         else
         {
+			receptionTrigger.contadorTransaccion = 0;
+
+        MontoItem[] items = Object.FindObjectsByType<MontoItem>(FindObjectsSortMode.None);
+        foreach (MontoItem item in items)
+        {
+            item.ResetItem();
+        }
+
+        if (receptionTrigger.uiController != null)
+        {
+            receptionTrigger.uiController.ActualizarTransaccion(0);
+        }
+        else
+        {
+            Debug.LogError("ResetButtonController: uiController en receptionTrigger no está asignado.");
+        }
             transactionGoalController.MinusAttempt();
         }
     }
