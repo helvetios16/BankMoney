@@ -3,21 +3,26 @@ using System.Collections;
 
 public class NPCPathFollower : MonoBehaviour
 {
-    public Transform[] puntos;  // Puntos del camino
-    public float velocidad = 0.5f; // Velocidad de movimiento
+    public Transform[] puntos;
+    public float velocidad = 0.5f;
     private int indice = 0;
-    private int direccion = 1; // 1 = hacia adelante, -1 = hacia atrás
+    private int direccion = 1;
     private Animator anim;
-    private bool primeraVez = true; // Para controlar la primera llegada al punto 0
+    private bool primeraVez = true;
 
     public CountdownTimer countdownTimer;
     public TransactionGoalController transactionGoal;
-    public  ToggleButtonEnable toogleButtonEnable;
+    public ToggleButtonEnable toogleButtonEnable;
+
+    public BlinkOnBool blinkOnBool;
+
+    private bool _shouldInterrupt = false;     // bandera de interrupción
+    private Coroutine moverCoroutine;
 
     void Start()
     {
         anim = GetComponent<Animator>();
-        StartCoroutine(MoverNPC());
+        moverCoroutine = StartCoroutine(MoverNPC());
     }
 
     IEnumerator MoverNPC()
@@ -26,7 +31,6 @@ public class NPCPathFollower : MonoBehaviour
         {
             Vector3 destino = puntos[indice].position;
 
-            // Moverse hacia el punto actual
             while (Vector3.Distance(transform.position, destino) > 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, destino, velocidad * Time.deltaTime);
@@ -34,44 +38,59 @@ public class NPCPathFollower : MonoBehaviour
                 yield return null;
             }
 
-            // Llegó al punto → detener animación y esperar 10s solo si es el primero o el último
             if (indice == puntos.Length - 1) // Último punto
             {
                 anim.speed = 0f;
 
-                countdownTimer.StopTimer();  // 🔥 Detén antes de resetear
+                countdownTimer.StopTimer();
                 countdownTimer.ResetTimer();
                 transactionGoal.GenerateNewGoal();
                 countdownTimer.StartTimer();
 
-                yield return new WaitForSeconds(30f);
+                blinkOnBool.StartBlink();
 
-                
+                // Reseteamos la bandera antes de esperar
+                _shouldInterrupt = false;
+
+                float waitTime = 30f;
+                float elapsed = 0f;
+                while (elapsed < waitTime)
+                {
+                    elapsed += Time.deltaTime;
+                    if (_shouldInterrupt) break;
+                    yield return null;
+                }
+
+                blinkOnBool.StopBlink();
 
                 anim.speed = 1f;
                 direccion = -1; // Empieza a retroceder
             }
             else if (indice == 0)
             {
-                if (!primeraVez) // Si no es la primera vez que llega al punto 0
+                if (!primeraVez)
                 {
                     anim.speed = 0f;
-                    yield return new WaitForSeconds(5f);
+                    yield return new WaitForSeconds(2f);
                     anim.speed = 1f;
                 }
                 else
                 {
-                    primeraVez = false; // Marca que ya llegó una vez
+                    primeraVez = false;
                 }
-
-                direccion = 1; // Empieza a avanzar
+                direccion = 1;
             }
 
-            // Cambiar al siguiente punto según la dirección
             indice += direccion;
-
-            // Asegurar que el índice se mantenga dentro de los límites
             indice = Mathf.Clamp(indice, 0, puntos.Length - 1);
+
+            // En cualquier cambio de dirección, también queremos reiniciar la bandera para futuras esperas
+            _shouldInterrupt = false;
         }
+    }
+
+    public void InterruptAndGoBack()
+    {
+        _shouldInterrupt = true;
     }
 }

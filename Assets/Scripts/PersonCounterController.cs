@@ -4,8 +4,8 @@ using TMPro;
 
 public class PersonCounterController : MonoBehaviour
 {
-    public int maxPersons = 5;
-    public int currentPersons = 1;
+    public int maxPersons = 10;
+    public int currentPersons = 2;
 
     public GameEndController gameEndController;
 

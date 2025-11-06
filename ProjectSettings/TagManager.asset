@@ -10,6 +10,16 @@ TagManager:
   - Monto10kProcesado
   - Monto100
   - Monto100Procesado
+  - Monto50
+  - Monto20
+  - Monto10
+  - Monto50Procesado
+  - Monto20Procesado
+  - Monto10Procesado
+  - Monto5
+  - Monto5Procesado
+  - Monto1Procesado
+  - Monto1
   layers:
   - Default
   - TransparentFX

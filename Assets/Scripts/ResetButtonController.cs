@@ -5,14 +5,17 @@ public class ResetButtonController : MonoBehaviour
 {
     public Button resetButton;
     public ReceptionTrigger receptionTrigger;
-    
+
     public GameEndController gameEndController;
-    
+
     public CountdownTimer receptionTimer;
-    
+
     public TransactionGoalController transactionGoalController;
-    
+
     public PersonCounterController personCounterController;
+
+    // Nueva referencia al NPC follower
+    public NPCPathFollower npcPathFollower;
 
     void Start()
     {
@@ -43,13 +46,20 @@ public class ResetButtonController : MonoBehaviour
                 Debug.LogError("ResetButtonController: uiController en receptionTrigger no está asignado.");
             }
 
-            // Finalización o comportamiento de éxito
-            // gameEndController.ShowLose(); // O ShowWin() si lo tienes para éxito
-
             receptionTimer.StopTimer();
             receptionTimer.ResetTimer();
 
             personCounterController.AddPerson();
+
+            // Aquí llamamos al NPC para que se vaya inmediatamente
+            if (npcPathFollower != null)
+            {
+                npcPathFollower.InterruptAndGoBack();
+            }
+            else
+            {
+                Debug.LogError("ResetButtonController: npcPathFollower no asignado.");
+            }
         }
         else
         {
@@ -72,7 +82,6 @@ public class ResetButtonController : MonoBehaviour
             }
 
             // Aquí no se hace MinusAttempt ni se maneja intentos
-            // Puedes añadir otra lógica para fallo si lo deseas
         }
     }
 }
