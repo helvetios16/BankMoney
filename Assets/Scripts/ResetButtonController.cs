@@ -22,53 +22,57 @@ public class ResetButtonController : MonoBehaviour
 
     public void OnResetButtonClicked()
     {
+        // Comprobamos el objetivo
         if (transactionGoalController.CheckGoal(receptionTrigger.contadorTransaccion))
         {
-        
-        receptionTrigger.contadorTransaccion = 0;
+            // Se alcanzó el objetivo
+            receptionTrigger.contadorTransaccion = 0;
 
-        MontoItem[] items = Object.FindObjectsByType<MontoItem>(FindObjectsSortMode.None);
-        foreach (MontoItem item in items)
-        {
-            item.ResetItem();
-        }
+            MontoItem[] items = Object.FindObjectsByType<MontoItem>(FindObjectsSortMode.None);
+            foreach (MontoItem item in items)
+            {
+                item.ResetItem();
+            }
 
-        if (receptionTrigger.uiController != null)
-        {
-            receptionTrigger.uiController.ActualizarTransaccion(0);
-        }
-        else
-        {
-            Debug.LogError("ResetButtonController: uiController en receptionTrigger no está asignado.");
-        }
+            if (receptionTrigger.uiController != null)
+            {
+                receptionTrigger.uiController.ActualizarTransaccion(0);
+            }
+            else
+            {
+                Debug.LogError("ResetButtonController: uiController en receptionTrigger no está asignado.");
+            }
 
-        // gameEndController.ShowLose();
+            // Finalización o comportamiento de éxito
+            // gameEndController.ShowLose(); // O ShowWin() si lo tienes para éxito
 
-        receptionTimer.StopTimer();
-        receptionTimer.ResetTimer();
+            receptionTimer.StopTimer();
+            receptionTimer.ResetTimer();
 
-        personCounterController.AddPerson();
-
-        }
-        else
-        {
-			receptionTrigger.contadorTransaccion = 0;
-
-        MontoItem[] items = Object.FindObjectsByType<MontoItem>(FindObjectsSortMode.None);
-        foreach (MontoItem item in items)
-        {
-            item.ResetItem();
-        }
-
-        if (receptionTrigger.uiController != null)
-        {
-            receptionTrigger.uiController.ActualizarTransaccion(0);
+            personCounterController.AddPerson();
         }
         else
         {
-            Debug.LogError("ResetButtonController: uiController en receptionTrigger no está asignado.");
-        }
-            transactionGoalController.MinusAttempt();
+            // No se alcanzó el objetivo
+            receptionTrigger.contadorTransaccion = 0;
+
+            MontoItem[] items = Object.FindObjectsByType<MontoItem>(FindObjectsSortMode.None);
+            foreach (MontoItem item in items)
+            {
+                item.ResetItem();
+            }
+
+            if (receptionTrigger.uiController != null)
+            {
+                receptionTrigger.uiController.ActualizarTransaccion(0);
+            }
+            else
+            {
+                Debug.LogError("ResetButtonController: uiController en receptionTrigger no está asignado.");
+            }
+
+            // Aquí no se hace MinusAttempt ni se maneja intentos
+            // Puedes añadir otra lógica para fallo si lo deseas
         }
     }
 }

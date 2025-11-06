@@ -13,13 +13,13 @@ public class UIContadorController : MonoBehaviour
             Debug.LogError("UIContadorController: textoTransaccion no está asignado en el Inspector");
             return;
         }
-        textoTransaccion.text = "Transacción: ";
+        textoTransaccion.text = "";
     }
 
 
     public void ActualizarTransaccion(int monto)
     {
-        textoTransaccion.text = "Transacción: \n$" + monto.ToString();
+        textoTransaccion.text = "$" + monto.ToString();
     }
 }
 

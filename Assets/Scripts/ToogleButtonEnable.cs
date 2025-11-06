@@ -69,6 +69,6 @@ public class ToggleButtonEnable : MonoBehaviour
 
     void Start()
     {
-        DisableButton();
+        // DisableButton();
     }
 }
