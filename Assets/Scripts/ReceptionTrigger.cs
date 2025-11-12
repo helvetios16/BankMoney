@@ -8,20 +8,20 @@ public class ReceptionTrigger : MonoBehaviour
     public CountdownTimer receptionTimer;
     public PersonCounterController personCounterController;
     public NPCPathFollower npcPathFollower;
-    public BarraDeDinero barraDeDinero; // ← referencia a tu barra
+    public BarraDeDinero barraDeDinero;
 
     public int contadorTransaccion = 0;
     private HashSet<GameObject> objetosProcesados = new HashSet<GameObject>();
 
     private void Start()
     {
-        // Si hay una barra de dinero, inicializamos con 0
         if (barraDeDinero != null)
         {
             barraDeDinero.dineroActual = 0f;
-            barraDeDinero.dineroTotal = transactionGoalController != null 
-                ? transactionGoalController.GetGoalAmount() 
-                : 100f; // valor por defecto si no hay meta asignada
+            barraDeDinero.dineroTotal = transactionGoalController != null
+                ? transactionGoalController.GetGoalAmount()
+                : 100f;
+            barraDeDinero.ActualizarBarra();
         }
     }
 
@@ -41,15 +41,17 @@ public class ReceptionTrigger : MonoBehaviour
         go.tag = tag + "Procesado";
 
         contadorTransaccion += monto;
-        Debug.Log($"Objeto recibido: {monto} | Total actual: {contadorTransaccion}");
+        Debug.Log($"💵 Objeto recibido: {monto} | Total actual: {contadorTransaccion}");
 
-        // Actualiza la UI del contador
         if (uiController != null)
             uiController.ActualizarTransaccion(contadorTransaccion);
 
-        // Actualiza la barra visual
+        // ✅ Corrige el bloque con llaves
         if (barraDeDinero != null)
+        {
             barraDeDinero.dineroActual = contadorTransaccion;
+            barraDeDinero.ActualizarBarra();
+        }
 
         VerificarObjetivo();
     }
@@ -82,7 +84,7 @@ public class ReceptionTrigger : MonoBehaviour
         if (objetivoCumplido)
         {
             Debug.Log("✅ Objetivo alcanzado correctamente.");
-            ProcesarResultado(exito: true);
+            ProcesarResultado(true);
         }
         else
         {
@@ -90,7 +92,7 @@ public class ReceptionTrigger : MonoBehaviour
             if (contadorTransaccion > meta)
             {
                 Debug.Log("❌ Se pasó del objetivo, reiniciando...");
-                ProcesarResultado(exito: false);
+                ProcesarResultado(false);
             }
         }
     }
@@ -107,9 +109,11 @@ public class ReceptionTrigger : MonoBehaviour
         contadorTransaccion = 0;
         objetosProcesados.Clear();
 
-        // Reinicia la barra de dinero
         if (barraDeDinero != null)
+        {
             barraDeDinero.dineroActual = 0f;
+            barraDeDinero.ActualizarBarra();
+        }
 
         if (receptionTimer != null)
         {
@@ -123,7 +127,7 @@ public class ReceptionTrigger : MonoBehaviour
                 personCounterController.AddPerson();
 
             if (npcPathFollower != null)
-                npcPathFollower.InterruptAndGoBack();
+                npcPathFollower.InterruptAndGoBack(); // ✅ Aquí el NPC se va automáticamente
         }
     }
 }

@@ -34,4 +34,11 @@ public class BarraDeDinero : MonoBehaviour
     {
         dineroActual = 0;
     }
+
+	public void ActualizarBarra()
+    {
+        if (barraDeDinero != null && dineroTotal > 0)
+            barraDeDinero.fillAmount = dineroActual / dineroTotal;
+    }
+
 }
