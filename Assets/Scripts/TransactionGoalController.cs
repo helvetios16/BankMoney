@@ -120,7 +120,7 @@ public class TransactionGoalController : MonoBehaviour
     {
         if (goalText != null)
         {
-            goalText.text = "$" + goalAmount.ToString() + " /";
+            goalText.text = "$" + goalAmount.ToString() + "";
         }
         else
         {
