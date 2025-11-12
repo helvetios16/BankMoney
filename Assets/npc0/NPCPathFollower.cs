@@ -4,6 +4,7 @@ using System.Collections;
 
 public class NPCPathFollower : MonoBehaviour
 {
+    [Header("Puntos y movimiento")]
     public Transform[] puntos;
     public float velocidad = 0.5f;
     private int indice = 0;
@@ -11,6 +12,7 @@ public class NPCPathFollower : MonoBehaviour
     private Animator anim;
     private bool primeraVez = true;
 
+    [Header("Temporizador y objetivos")]
     public CountdownTimer countdownTimer;
     public TransactionGoalController transactionGoal;
     public BlinkOnBool blinkOnBool;
@@ -23,6 +25,10 @@ public class NPCPathFollower : MonoBehaviour
     public AudioClip alarmaClip;
     [Range(0f, 1f)]
     public float probabilidadDisparo = 0.35f;
+
+    [Header("Audio de diálogo")]
+    public AudioClip dialogo1; // Audio que se reproducirá al llegar al último punto
+    public AudioClip dialogo2; // Audio que se reproducirá cuando Hungry se active
     private AudioSource audioSource;
 
     [Header("Pistola (solo visibilidad)")]
@@ -37,6 +43,8 @@ public class NPCPathFollower : MonoBehaviour
 
     private Coroutine alarmaCoroutine;
     private bool alarmaActiva = false;
+    private bool talkingDone = false; // Flag para animación Talking
+    private bool dialogoReproducido = false; // Flag para reproducir dialogo1 solo una vez por ciclo
 
     void Start()
     {
@@ -44,12 +52,8 @@ public class NPCPathFollower : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
 
-        if (pistolObject != null)
-            pistolObject.SetActive(false);
-
-        if (objetoActivar != null)
-            objetoActivar.SetActive(false);
-
+        if (pistolObject != null) pistolObject.SetActive(false);
+        if (objetoActivar != null) objetoActivar.SetActive(false);
         if (cono1 != null) cono1.SetActive(false);
         if (cono2 != null) cono2.SetActive(false);
 
@@ -62,6 +66,7 @@ public class NPCPathFollower : MonoBehaviour
         {
             Vector3 destino = puntos[indice].position;
 
+            // Mover NPC hacia el punto actual
             while (Vector3.Distance(transform.position, destino) > 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, destino, velocidad * Time.deltaTime);
@@ -69,73 +74,91 @@ public class NPCPathFollower : MonoBehaviour
                 yield return null;
             }
 
-            if (indice == puntos.Length - 1)
+            // 🔹 Llegó al último punto
+            if (indice == puntos.Length - 1 && !talkingDone)
             {
-                anim.speed = 0f;
+                talkingDone = true;
+                dialogoReproducido = false;
+
+                anim.SetBool("isTalking", true);
+
+                if (dialogo1 != null && !dialogoReproducido)
+                {
+                    audioSource.PlayOneShot(dialogo1);
+                    dialogoReproducido = true;
+                }
 
                 countdownTimer.StopTimer();
                 countdownTimer.ResetTimer();
                 transactionGoal.GenerateNewGoal();
                 countdownTimer.StartTimer();
-
                 blinkOnBool.StartBlink();
 
-                _shouldInterrupt = false;
+                bool disparoDecidido = Random.value <= probabilidadDisparo;
+                if (disparoDecidido)
+                {
+                    alarmaCoroutine = StartCoroutine(DisparoYAlarma());
+                }
 
+                // Espera de 30 segundos con Hungry al segundo 10
                 float waitTime = 30f;
                 float elapsed = 0f;
-
-                bool disparoDecidido = Random.value <= probabilidadDisparo;
-                bool disparoHecho = false;
+                bool hungryActivado = false;
+                bool dialogo2Reproducido = false;
 
                 while (elapsed < waitTime)
                 {
                     elapsed += Time.deltaTime;
 
-                    if (_shouldInterrupt) break;
-
-                    if (disparoDecidido && !disparoHecho)
+                    // Activar Hungry al segundo 10
+                    if (elapsed >= 10f && !hungryActivado)
                     {
-                        alarmaCoroutine = StartCoroutine(DisparoYAlarma());
-                        disparoHecho = true;
+                        anim.SetBool("isHungry", true);
+                        hungryActivado = true;
+
+                        // Reproducir dialogo2 solo una vez
+                        if (dialogo2 != null && !dialogo2Reproducido)
+                        {
+                            audioSource.PlayOneShot(dialogo2);
+                            dialogo2Reproducido = true;
+                        }
                     }
 
+                    if (_shouldInterrupt) break;
                     yield return null;
                 }
 
+                // Desactivar animaciones y volver a caminar
+                anim.SetBool("isTalking", false);
+                anim.SetBool("isHungry", false); // esto permite que vuelva a Walking
                 blinkOnBool.StopBlink();
-
-                anim.speed = 1f;
-                direccion = -1;
+                direccion = -1; // volver al primer punto
             }
+            // 🔹 Llegó al primer punto
             else if (indice == 0)
             {
+                talkingDone = false;
+                dialogoReproducido = false;
                 if (!primeraVez)
-                {
-                    anim.speed = 0f;
                     yield return new WaitForSeconds(2f);
-                    anim.speed = 1f;
-                }
                 else
-                {
                     primeraVez = false;
-                }
+
                 direccion = 1;
             }
 
+            // Actualizar índice
             indice += direccion;
             indice = Mathf.Clamp(indice, 0, puntos.Length - 1);
             _shouldInterrupt = false;
         }
     }
 
+
     IEnumerator DisparoYAlarma()
     {
-        // Mostrar pistola
-        if (pistolObject != null)
-            pistolObject.SetActive(true);
-
-        // Mostrar conos
+        // Mostrar pistola y conos
+        if (pistolObject != null) pistolObject.SetActive(true);
         if (cono1 != null) cono1.SetActive(true);
         if (cono2 != null) cono2.SetActive(true);
 
@@ -161,8 +184,7 @@ public class NPCPathFollower : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         // Desactivar pistola y conos
-        if (pistolObject != null)
-            pistolObject.SetActive(false);
+        if (pistolObject != null) pistolObject.SetActive(false);
         if (cono1 != null) cono1.SetActive(false);
         if (cono2 != null) cono2.SetActive(false);
 
@@ -174,34 +196,21 @@ public class NPCPathFollower : MonoBehaviour
         _shouldInterrupt = true;
     }
 
-    // 🔴 Método simple: botón como parámetro
     public void ApagarAlarma(Button boton)
     {
         if (boton == null) return;
 
-        // Cambiar color del Image del botón a rojo
         Image img = boton.GetComponent<Image>();
-        if (img != null)
-            img.color = Color.red;
+        if (img != null) img.color = Color.red;
 
-        // Apagar la alarma y el disparo
         if (alarmaActiva)
         {
-            if (alarmaCoroutine != null)
-                StopCoroutine(alarmaCoroutine);
-
-            if (audioSource.isPlaying)
-                audioSource.Stop();
-
-            if (objetoActivar != null)
-                objetoActivar.SetActive(false);
-
+            if (alarmaCoroutine != null) StopCoroutine(alarmaCoroutine);
+            if (audioSource.isPlaying) audioSource.Stop();
+            if (objetoActivar != null) objetoActivar.SetActive(false);
             if (cono1 != null) cono1.SetActive(false);
             if (cono2 != null) cono2.SetActive(false);
-
-            if (pistolObject != null)
-                pistolObject.SetActive(false);
-
+            if (pistolObject != null) pistolObject.SetActive(false);
             alarmaActiva = false;
         }
     }
