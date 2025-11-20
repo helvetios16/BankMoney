@@ -46,6 +46,9 @@ public class NPCPathFollower : MonoBehaviour
     private bool talkingDone = false; // Flag para animación Talking
     private bool dialogoReproducido = false; // Flag para reproducir dialogo1 solo una vez por ciclo
 
+	public ButtonAlertEffect botonAlerta; // arrastra el botón desde el inspector
+
+
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -98,6 +101,8 @@ public class NPCPathFollower : MonoBehaviour
                 if (disparoDecidido)
                 {
                     alarmaCoroutine = StartCoroutine(DisparoYAlarma());
+					if (botonAlerta != null)
+        				botonAlerta.StartAlert();
                 }
 
                 // Espera de 30 segundos con Hungry al segundo 10
@@ -211,6 +216,7 @@ public class NPCPathFollower : MonoBehaviour
             if (cono1 != null) cono1.SetActive(false);
             if (cono2 != null) cono2.SetActive(false);
             if (pistolObject != null) pistolObject.SetActive(false);
+			botonAlerta.StopAlert();
             alarmaActiva = false;
         }
     }
